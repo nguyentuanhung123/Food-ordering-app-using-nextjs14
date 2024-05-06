@@ -1,7 +1,6 @@
 import React from 'react'
 
 //components
-import Header from '@/components/layout/Header'
 import Hero from '@/components/layout/Hero'
 import HomeMenu from '@/components/layout/HomeMenu'
 import SectionHeaders from '@/components/layout/SectionHeaders'
@@ -9,7 +8,6 @@ import SectionHeaders from '@/components/layout/SectionHeaders'
 const Home = () => {
   return (
     <>
-      <Header />
       <Hero />
       <HomeMenu />
       <section className='text-center my-16'>
@@ -47,9 +45,6 @@ const Home = () => {
           </a>
         </div>
       </section>
-      <footer className='border-t p-8 text-center text-gray-500 mt-16'>
-        &copy; 2024 All rights reserved
-      </footer>
     </>
   )
 }
