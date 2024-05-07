@@ -158,3 +158,50 @@ Check out our [Next.js deployment documentation](https://nextjs.org/docs/deploym
     "@/*": ["./src/*"]
 }
 ```
+
+### Sau khi code logic login on login page and route.jsx thì ta bấm login ở browser nếu nó ra passworkOk: true thì thành công
+
+### Sử dụng useSession() trong Header.
+
+- React Hook useSession() trong ứng dụng NextAuth.js client là cách dễ nhất để kiểm tra xem ai đó đã đăng nhập hay chưa.
+
+- Đảm bảo rằng <SessionProvider> được thêm vào pages/_app.js.
+
+- Trong Project này, sau khi ta bấm login thì màn hình sẽ reload cho thấy ta đã đăng nhập và để hiển thị thông tin ai đã login đó thì 
+ta sử dụng useSession() bằng cách chỉnh sửa Header.jsx
+
+```jsx
+const session = useSession();
+console.log(session);
+```
+
+- Nhưng như vậy là chưa đủ, ta phải tạo thêm <SessionProvider> như yêu cầu. Trong project này ta tạo bằng cách tạo 1 file AppContext.jsx trong folder components
+
+```jsx
+"use client"
+import { SessionProvider } from "next-auth/react"
+
+const AppProvider = ({children}) => {
+    return (
+        <SessionProvider>{children}</SessionProvider>
+    )
+}
+
+export default AppProvider
+```
+
+- Cuối cùng ở file layout.jsx ta bổ sung :
+
+```jsx
+<main className="max-w-4xl mx-auto p-4">
+    <AppProvider>
+        <Header />
+        {children}
+        <footer className='border-t p-8 text-center text-gray-500 mt-16'>
+            &copy; 2024 All rights reserved
+        </footer>
+    </AppProvider>
+</main>
+```
+
+- Như vậy thì màn hình sẽ tự động reload lại (mà ta không cần phải nhập thông tin và bấm login) nó sẽ đưa ra info của user mà ta đã login trước đó thành công
