@@ -6,16 +6,21 @@ import React, { useState } from 'react'
 const RegisterPage = () => {
     const [email, setEmail] = useState('')
     const [password, setPassword] = useState('')
+    const [creatingUser, setCreatingUser] = useState(false)
+    const [userCreated, setUserCreated] = useState(false)
 
-    const handleFormSubmit = (e) => {
+    const handleFormSubmit = async (e) => {
         e.preventDefault();
-        fetch('/api/register', {
+        setCreatingUser(true)
+        await fetch('/api/register', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
             },
             body: JSON.stringify({email, password})
-        })
+        });
+        setCreatingUser(false)
+
     }
 
     return (
@@ -27,16 +32,23 @@ const RegisterPage = () => {
                 <input 
                     type='email' 
                     placeholder='email'
+                    disabled={creatingUser}
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                 />
                 <input 
                     type='password' 
                     placeholder='password'
+                    disabled={creatingUser}
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
                 />
-                <button type='submit'>Register</button>
+                <button 
+                    type='submit'
+                    disabled={creatingUser}
+                >
+                    Register
+                </button>
                 <div className='my-4 text-center text-gray-500'>
                     or login with provider
                 </div>

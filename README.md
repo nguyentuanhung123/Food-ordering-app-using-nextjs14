@@ -148,3 +148,13 @@ Check out our [Next.js deployment documentation](https://nextjs.org/docs/deploym
 - B2: Tạo folder models bên trong app
 
 ### Sử dụng bcrypt : npm i bcrypt
+
+### Sau khi ta tạo route.ts [...nextauth] thì nó sẽ tạo ra tsconfig.json và ta khi chạy lại app sẽ bị lỗi kì lạ (nó sẽ bảo Header bị sai)
+
+# Cách sửa: Bổ sung code bên dưới vào bên trong file tsconfig.json (Cụ thể: cùng cấp với "lib": [...]) .Nhưng do ta đã sữa route.ts thành route.jsx nên không cần phải thêm như bên dưới 
+
+```jsx
+"paths": {
+    "@/*": ["./src/*"]
+}
+```
