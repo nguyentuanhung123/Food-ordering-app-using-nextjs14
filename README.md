@@ -146,3 +146,5 @@ Check out our [Next.js deployment documentation](https://nextjs.org/docs/deploym
 
 - B1: npm i mongoose
 - B2: Tạo folder models bên trong app
+
+### Sử dụng bcrypt : npm i bcrypt
