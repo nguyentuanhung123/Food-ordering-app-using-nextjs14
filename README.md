@@ -205,3 +205,62 @@ export default AppProvider
 ```
 
 - Như vậy thì màn hình sẽ tự động reload lại (mà ta không cần phải nhập thông tin và bấm login) nó sẽ đưa ra info của user mà ta đã login trước đó thành công
+
+### Đây là code trước khi có logic đăng nhập bằng goole trong folder [...nextauth]
+
+```jsx
+import mongoose from "mongoose"
+import {User} from '@/models/User'
+import bcrypt from "bcrypt";
+import NextAuth from "next-auth"
+import CredentialsProvider from "next-auth/providers/credentials"
+
+const handler =  NextAuth({
+    secret: process.env.SECRET,
+    providers: [
+        CredentialsProvider({
+            // The name to display on the sign in form (e.g. 'Sign in with...')
+            name: 'Credentials',
+            id: 'credentials',
+            credentials: {
+                username: { label: "Email", type: "email", placeholder: "test@gmail.com" },
+                password: { label: "Password", type: "password" }
+            },
+            async authorize(credentials, req) {
+                // console.log({credentials}); // { credentials: { email: '...', password: '...', csrfToken: '...', callbackUrl: '...', json: 'true'} }
+                const email = credentials?.email;
+                const password = credentials?.password;
+
+                mongoose.connect(process.env.MONGO_URL);
+                const user = await User.findOne({email});
+                const passwordOk = user && bcrypt.compareSync(password, user.password);
+
+                // console.log({passwordOk});
+
+                if(passwordOk) {
+                    return user;
+                }
+                // Return null if user data could not be retrieved
+                return null
+            }
+        })
+    ]
+})
+
+export { handler as GET, handler as POST }
+```
+
+### Logic đăng nhập vào Google và lưu thông tin trong MongoDB
+
+### Sử dụng whitespace-nowrap để đảm bảo các text không bị xuống dòng
+
+```jsx
+<Link 
+    href={'/profile'}
+    className='whitespace-nowrap'
+>
+    Hello, {userName}
+</Link>
+```
+### Khi ta chưa login mà vào Profile page thì session sẽ hiện object lần lượt là { data: undifined, status: 'loading', update: f } rồi đến { data: null, status: 'unauthenticated', update: f }
+

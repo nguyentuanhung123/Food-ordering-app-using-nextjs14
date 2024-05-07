@@ -16,7 +16,7 @@ const handler =  NextAuth({
                 password: { label: "Password", type: "password" }
             },
             async authorize(credentials, req) {
-                // console.log({credentials});
+                console.log({credentials}); // { credentials: { email: '...', password: '...', csrfToken: '...', callbackUrl: '...', json: 'true'} }
                 const email = credentials?.email;
                 const password = credentials?.password;
 
