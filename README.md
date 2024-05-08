@@ -392,5 +392,119 @@ import clientPromise from "@/libs/mongoConnect";
 adapter: MongoDBAdapter(clientPromise),
 ```
 
+### Chỉnh sửa profile page sau khi đăng nhập
+
+- B1: Sửa lại file route.jsx trong [...nextAuth] (tạo biến authOptions và paste object trong hàm NextAuth)
+
+- Ban đầu
+
+```jsx
+
+const handler =  NextAuth({
+    secret: process.env.SECRET,
+    adapter: MongoDBAdapter(clientPromise),
+    providers: [
+        GoogleProvider({
+            clientId: process.env.GOOGLE_CLIENT_ID,
+            clientSecret: process.env.GOOGLE_CLIENT_SECRET
+        }),
+        CredentialsProvider({
+            // The name to display on the sign in form (e.g. 'Sign in with...')
+            name: 'Credentials',
+            id: 'credentials',
+            credentials: {
+                username: { label: "Email", type: "email", placeholder: "test@gmail.com" },
+                password: { label: "Password", type: "password" }
+            },
+            async authorize(credentials, req) {
+                console.log({credentials}); // { credentials: { email: '...', password: '...', csrfToken: '...', callbackUrl: '...', json: 'true'} }
+                const email = credentials?.email;
+                const password = credentials?.password;
+
+                mongoose.connect(process.env.MONGO_URL);
+                const user = await User.findOne({email});
+                const passwordOk = user && bcrypt.compareSync(password, user.password);
+
+                // console.log({passwordOk});
+
+                if(passwordOk) {
+                    return user;
+                }
+                // Return null if user data could not be retrieved
+                return null
+            }
+        })
+    ]
+})
+
+export { handler as GET, handler as POST }
+```
+
+- Sau khi sửa
+```jsx
+export const authOptions = {
+    secret: process.env.SECRET,
+    adapter: MongoDBAdapter(clientPromise),
+    providers: [
+        GoogleProvider({
+            clientId: process.env.GOOGLE_CLIENT_ID,
+            clientSecret: process.env.GOOGLE_CLIENT_SECRET
+        }),
+        CredentialsProvider({
+            // The name to display on the sign in form (e.g. 'Sign in with...')
+            name: 'Credentials',
+            id: 'credentials',
+            credentials: {
+                username: { label: "Email", type: "email", placeholder: "test@gmail.com" },
+                password: { label: "Password", type: "password" }
+            },
+            async authorize(credentials, req) {
+                console.log({credentials}); // { credentials: { email: '...', password: '...', csrfToken: '...', callbackUrl: '...', json: 'true'} }
+                const email = credentials?.email;
+                const password = credentials?.password;
+
+                mongoose.connect(process.env.MONGO_URL);
+                const user = await User.findOne({email});
+                const passwordOk = user && bcrypt.compareSync(password, user.password);
+
+                // console.log({passwordOk});
+
+                if(passwordOk) {
+                    return user;
+                }
+                // Return null if user data could not be retrieved
+                return null
+            }
+        })
+    ]
+}
+
+const handler =  NextAuth(authOptions)
+
+export { handler as GET, handler as POST }
+```
+
+- B2: Tạo folder profile trong folder api (route.jsx) và chỉnh sửa
+
+```jsx
+import mongoose from "mongoose";
+import { getServerSession } from "next-auth";
+
+export async function PUT(req) {
+    mongoose.connect(process.env.MONGO_URL);
+    const data = await req.json()
+    const session = await getServerSession(); // lấy user đang đăng nhập
+    if('name' in data) {
+        // update user name
+    }
+}
+```
+
+- B3: Bổ sung authOptions đã làm
+
+### Fix lỗi : nếu đăng nhập bằng google bị lỗi hãy thử xóa tài khoản ở users mongodb và chạy lại
+
+
+
 
 

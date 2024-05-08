@@ -2,22 +2,27 @@
 import { useSession } from 'next-auth/react'
 import Image from 'next/image';
 import { redirect } from 'next/navigation';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 
 const ProfilePage = () => {
     const session = useSession()
     // console.log(session);
-
-    const [userName, setUserName] = useState(session?.data?.user?.name || '');
+    const [userName, setUserName] = useState('');
     const {status} = session;
+
+    useEffect(() => {
+        if(status === 'authenticated') {
+            setUserName(session.data.user.name)
+        }
+    }, [session, status])
 
     const handleProfileInfoUpdate = async (e) => {
         e.preventDefault();
         const response = await fetch('/api/profile', {
             method: 'PUT',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({user: userName})
+            body: JSON.stringify({name: userName})
         })
     }
 
