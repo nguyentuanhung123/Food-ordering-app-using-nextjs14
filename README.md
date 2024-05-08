@@ -264,3 +264,35 @@ export { handler as GET, handler as POST }
 ```
 ### Khi ta chưa login mà vào Profile page thì session sẽ hiện object lần lượt là { data: undifined, status: 'loading', update: f } rồi đến { data: null, status: 'unauthenticated', update: f }
 
+### Tạo chức năng đăng nhập vào bằng google
+
+- B1: Vào Link : https://console.cloud.google.com/welcome?project=food-ordering-422704
+- B2: Nhấn APIs & Services
+- B3: Bấm New Project ở options bên cạch logo Google Cloud -> Gõ tên Project mới muốn tạo (ex: food-ordering) và Create -> Bấm Create
+- B4: Ở Sidebar, chọn OAuth consent screen -> Ở Usẻ Type, chọn External -> Nhập App Information (Food Ordering App and email...). Bên dưới ở Developer contact information gõ email ra -> Save and Continue
+- B5: Ở Sidebar, chọn Credentials -> Ở Navbar bấm CREATE CREDENTIALS -> Chọn OAuth client ID -> Application Type: Web application, giữ nguyên Name: Web client 1
+- B6: Bên dưới Authorized redirect URIs -> Bấm ADD URI: http://localhost:3000/api/auth/callback/google -> CREATE
+- B7: Nó sẽ hiện Box: Copy Client ID và Client secret. Paste nó vào trong file .env trong project với những tên mà ta đã tạo
+- B8: Vào link: https://next-auth.js.org/providers/google . Copy đoạn code và paste nó trong route.jsx trong folder [...nextauth]
+```jsx
+import GoogleProvider from "next-auth/providers/google";
+GoogleProvider({
+    clientId: process.env.GOOGLE_CLIENT_ID,
+    clientSecret: process.env.GOOGLE_CLIENT_SECRET
+})
+```
+- B9: Add onClick trong button Login with Google trong register page và login page. Nó sẽ bị hiện lỗi nên ta phải khởi động lại app
+
+```jsx
+<button 
+    type='button' 
+    className='flex gap-4 justify-center'
+    onClick={() => signIn('google', {callbackUrl: '/'})}
+>
+    <Image src={'/google.png'} alt='' width={24} height={24}/>
+    Login with Google
+</button>
+```
+
+- B10: Ta phải lưu nó trong MongoDB
+
