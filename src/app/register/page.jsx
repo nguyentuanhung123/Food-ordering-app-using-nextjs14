@@ -81,6 +81,7 @@ const RegisterPage = () => {
                     or login with provider
                 </div>
                 <button 
+                    type='button'   
                     onClick={() => signIn('google', {callbackUrl: '/'})}
                     className='flex gap-4 justify-center'
                 >
